@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Fuego</string>
+    <string name="signuptext"><![CDATA[ Don\'t have an <b><font color=#0000ff>account</font></b> ? ]]></string>
+</resources>
