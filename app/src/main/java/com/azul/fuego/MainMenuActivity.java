@@ -1,17 +1,17 @@
 package com.azul.fuego;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.azul.fuego.core.Fuego;
+import com.azul.fuego.core.Users;
+import com.azul.fuego.ui.profile.ProfileFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
@@ -34,11 +33,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainMenuActivity extends AppCompatActivity {
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
     private TextView nav_tvName, nav_tvEmail;
     private ImageView nav_ivPhoto;
     private Toolbar toolbar;
+    private Fuego myApp;
 
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout drawer;
@@ -51,22 +49,15 @@ public class MainMenuActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        // Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        //                        .setAction("Action", null).show();
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_profile, R.id.nav_about)
-                .setDrawerLayout(drawer)
+                R.id.nav_home, R.id.nav_favourites, R.id.nav_profile, R.id.nav_about, R.id.nav_favourites, R.id.nav_settings, R.id.nav_history)
+                .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
@@ -87,7 +78,7 @@ public class MainMenuActivity extends AppCompatActivity {
                                     .setTitle("Logout")
                                     .setMessage("Are you sure want to logout?")
                                     .setPositiveButton("YES", (dialog, which) -> {
-                                        mFirebaseAuth.signOut();
+                                        Fuego.mAuth.signOut();
                                         startActivity(new Intent(MainMenuActivity.this, LoginActivity.class));
                                         finish();
                                     })
@@ -97,7 +88,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 }
 
                 drawer.closeDrawer(GravityCompat.START);
-                return handled;
+                return true;
             }
         });
 
@@ -110,14 +101,12 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
-
-        if (mFirebaseUser != null) {
-            String name = mFirebaseUser.getDisplayName();
-            String email = mFirebaseUser.getEmail();
-            String phone = mFirebaseUser.getPhoneNumber();
-            Uri photo = mFirebaseUser.getPhotoUrl();
+        myApp = new Fuego();
+        if (Fuego.isLoggedIn()) {
+            String name = Fuego.User.getDisplayName();
+            String email = Fuego.User.getEmail();
+            String phone = Fuego.User.getPhoneNumber();
+            Uri photo = Fuego.User.getPhotoUrl();
 
             nav_tvName.setText(name);
             nav_tvEmail.setText(email);

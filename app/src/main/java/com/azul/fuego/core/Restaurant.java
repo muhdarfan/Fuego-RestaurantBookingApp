@@ -1,8 +1,10 @@
 package com.azul.fuego.core;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Restaurant {
+public class Restaurant implements Parcelable {
     private String name, phone, address, about;
     private double rating;
     private Uri imgUri, website;
@@ -70,5 +72,43 @@ public class Restaurant {
 
     public void setWebsite(Uri website) {
         this.website = website;
+    }
+
+    protected Restaurant(Parcel in) {
+        name = in.readString();
+        phone = in.readString();
+        address = in.readString();
+        about = in.readString();
+        rating = in.readDouble();
+        imgUri = in.readParcelable(Uri.class.getClassLoader());
+        website = in.readParcelable(Uri.class.getClassLoader());
+    }
+
+    public static final Creator<Restaurant> CREATOR = new Creator<Restaurant>() {
+        @Override
+        public Restaurant createFromParcel(Parcel in) {
+            return new Restaurant(in);
+        }
+
+        @Override
+        public Restaurant[] newArray(int size) {
+            return new Restaurant[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(phone);
+        dest.writeString(address);
+        dest.writeString(about);
+        dest.writeDouble(rating);
+        dest.writeString(imgUri.toString());
+        dest.writeString(website.toString());
     }
 }

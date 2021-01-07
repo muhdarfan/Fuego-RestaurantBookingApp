@@ -1,60 +1,40 @@
 package com.azul.fuego.ui.profile;
 
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavHostController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.azul.fuego.R;
+import com.azul.fuego.core.Fuego;
+import com.azul.fuego.core.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileEditFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ProfileEditFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ProfileEditFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileEditFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileEditFragment newInstance(String param1, String param2) {
-        ProfileEditFragment fragment = new ProfileEditFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private EditText etName, etEmail, etPass, etPhone;
+    private Button updateBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +42,77 @@ public class ProfileEditFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile_edit, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        etName = view.findViewById(R.id.profile_edit_et_name);
+        etEmail = view.findViewById(R.id.profile_edit_et_email);
+        etPass = view.findViewById(R.id.profile_edit_et_password);
+        etPhone = view.findViewById(R.id.profile_edit_et_phone);
+        updateBtn = view.findViewById(R.id.profile_edit_btn_update);
+
+        etName.setText(Fuego.User.getDisplayName());
+        etEmail.setText(Fuego.User.getEmail());
+        etPhone.setText(Fuego.User.getPhoneNumber());
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateBtn.setEnabled(false);
+
+                String name = etName.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
+                String pass = etPass.getText().toString().trim();
+                String phone = etPhone.getText().toString().trim();
+
+                if (!(TextUtils.isEmpty(name) && TextUtils.isEmpty(email) && TextUtils.isEmpty(phone)) && Fuego.isValidEmail(email) && (TextUtils.isEmpty(pass) | pass.length() > 5)) {
+                        if (!email.equals(Fuego.User.getEmail())) {
+                            Fuego.User.updateEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (!task.isSuccessful())
+                                        Toast.makeText(view.getContext(), "Failed to update email. [MSG: " + task.getException().getMessage() + "]", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+
+                        if (!TextUtils.isEmpty(pass)) {
+                            Fuego.User.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (!task.isSuccessful())
+                                        Toast.makeText(view.getContext(), "Failed to update password. [MSG: " + task.getException().getMessage() + "]", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(name)
+                                .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+                                .build();
+                        Fuego.User.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()) {
+                                    Snackbar.make(view, "Your profile information has been successfully updated!", Snackbar.LENGTH_LONG).show();
+                                    NavHostFragment.findNavController(ProfileEditFragment.this).popBackStack();
+                                }
+                            }
+                        });
+                } else {
+                    if (TextUtils.isEmpty(name))
+                        etName.setError("");
+                    else if (TextUtils.isEmpty(email))
+                        etEmail.setError("");
+                    else if (!TextUtils.isEmpty(pass) && pass.length() < 6)
+                        etPass.setError("");
+                    else if (TextUtils.isEmpty(phone))
+                        etPhone.setError("");
+                }
+            }
+        });
     }
 }

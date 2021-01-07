@@ -1,5 +1,8 @@
 package com.azul.fuego.core;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class Users {
     private String Username, Fullname, Email, Roles, Gender;
 

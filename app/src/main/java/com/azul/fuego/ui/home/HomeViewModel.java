@@ -11,7 +11,6 @@ import com.azul.fuego.core.Restaurant;
 import java.util.ArrayList;
 
 public class HomeViewModel extends ViewModel {
-
     private MutableLiveData<ArrayList<Restaurant>> restaurantLiveData;
     private ArrayList<Restaurant> restaurantList;
 
