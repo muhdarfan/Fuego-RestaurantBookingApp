@@ -16,14 +16,23 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.azul.fuego.R;
+import com.azul.fuego.core.Booking;
 import com.azul.fuego.core.Restaurant;
 import com.azul.fuego.ui.profile.ProfileEditFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class RestaurantDetailActivity extends Fragment {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class RestaurantDetailActivity extends Fragment implements OnMapReadyCallback {
     private Restaurant restaurant;
     private TextView name, operating_hours, address, about;
     private MapView location;
@@ -31,14 +40,14 @@ public class RestaurantDetailActivity extends Fragment {
     private Button bookBtn;
     private ImageButton backBtn;
 
-    private GoogleMap googleMap;
+    private GoogleMap mMap;
+    private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             restaurant = getArguments().getParcelable("restaurant");
-
             if (restaurant != null) return;
         }
 
@@ -51,11 +60,6 @@ public class RestaurantDetailActivity extends Fragment {
         // Inflate the layout for this fragment
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
         return inflater.inflate(R.layout.fragment_restaurant_detail_activity, container, false);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -76,6 +80,21 @@ public class RestaurantDetailActivity extends Fragment {
         address.setText(restaurant.getAddress());
         about.setText(restaurant.getAbout());
 
+        if (restaurant.getOperating() != null) {
+            String start = restaurant.getOperating().get("start");
+            String end = restaurant.getOperating().get("end");
+            Integer diff = (Integer.parseInt(end) - Integer.parseInt(start)) / 100;
+
+            operating_hours.setText(String.format("Open %d hours a day. (%s - %s)", diff, start, end));
+        }
+
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null)
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
+
+        location.onCreate(mapViewBundle);
+        location.getMapAsync(this);
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,27 +102,71 @@ public class RestaurantDetailActivity extends Fragment {
             }
         });
 
-        bookBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
+        bookBtn.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("restaurant", restaurant);
+            NavHostFragment.findNavController(RestaurantDetailActivity.this).navigate(R.id.nav_book_table, bundle);
         });
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        location.onSaveInstanceState(mapViewBundle);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        location.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        location.onStart();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        location.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        location.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        location.onResume();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
+        location.onLowMemory();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        if (mMap != null && restaurant.getLocation() != null) {
+            final LatLng latLocation = new LatLng(restaurant.getLocation().getLatitude(), restaurant.getLocation().getLongitude());
+            mMap.addMarker(new MarkerOptions().position(latLocation).title(restaurant.getName()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLocation, 15));
+        } else {
+            Toast.makeText(getContext(), "Can't get restaurant location. Please try again or contact administrator.", Toast.LENGTH_LONG).show();
+        }
     }
 }

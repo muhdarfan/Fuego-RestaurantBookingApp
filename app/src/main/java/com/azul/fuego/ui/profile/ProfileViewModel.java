@@ -8,19 +8,20 @@ import androidx.lifecycle.ViewModel;
 
 import com.azul.fuego.core.Fuego;
 import com.azul.fuego.core.Restaurant;
+import com.azul.fuego.core.Users;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class ProfileViewModel extends ViewModel {
-    private MutableLiveData<FirebaseUser> userData;
+    private MutableLiveData<Users> userData;
 
     public ProfileViewModel() {
         userData = new MutableLiveData<>();
-        userData.setValue(Fuego.User);
+        userData.setValue(Fuego.UserData);
     }
 
-    public LiveData<FirebaseUser> getUserDataMutableLiveData() {
+    public LiveData<Users> getUserDataMutableLiveData() {
         return userData;
     }
 }

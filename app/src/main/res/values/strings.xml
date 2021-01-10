@@ -13,6 +13,8 @@
     <string name="menu_favourites">Favourites</string>
     <string name="menu_history">History</string>
     <string name="menu_profile">Profile</string>
+    <string name="menu_profile_edit">Edit Profile</string>
+    <string name="menu_book_table">Booking Form</string>
     <string name="menu_about">About Us</string>
     <string name="menu_logout">Logout</string>
     <!-- TODO: Remove or change this placeholder text -->

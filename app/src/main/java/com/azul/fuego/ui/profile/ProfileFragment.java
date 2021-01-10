@@ -26,6 +26,7 @@ import android.widget.Toolbar;
 import com.azul.fuego.R;
 import com.azul.fuego.core.Restaurant;
 import com.azul.fuego.core.RestaurantRecyclerViewAdapter;
+import com.azul.fuego.core.Users;
 import com.azul.fuego.ui.home.HomeViewModel;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -52,16 +53,13 @@ public class ProfileFragment extends Fragment {
         phone = getView().findViewById(R.id.profile_tv_phone);
         editBtn = getView().findViewById(R.id.profile_iv_edit);
 
-        mViewModel.getUserDataMutableLiveData().observe(getViewLifecycleOwner(), new Observer<FirebaseUser>() {
+        mViewModel.getUserDataMutableLiveData().observe(getViewLifecycleOwner(), new Observer<Users>() {
             @Override
-            public void onChanged(FirebaseUser firebaseUser) {
-                String name = firebaseUser.getDisplayName();
-                String phoneNumber = firebaseUser.getPhoneNumber();
-
-                nickname.setText(name.split(" ")[0].trim());
-                fullName.setText(name);
-                email.setText(firebaseUser.getEmail());
-                phone.setText(TextUtils.isEmpty(phoneNumber) ? "No phone number attached." : phoneNumber);
+            public void onChanged(Users users) {
+                fullName.setText(users.getFullname());
+                nickname.setText(users.getFullname().split(" ")[0]);
+                email.setText(users.getEmail());
+                phone.setText(TextUtils.isEmpty(users.getPhone()) ? "No phone number attached." : users.getPhone());
             }
         });
 

@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,25 +16,35 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.MainMenuActivity;
 import com.azul.fuego.R;
+import com.azul.fuego.core.Fuego;
 import com.azul.fuego.core.Restaurant;
+import com.azul.fuego.core.RestaurantAdapter;
 import com.azul.fuego.core.RestaurantRecyclerViewAdapter;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements RestaurantAdapter.OnRestaurantSelectedListener {
     private HomeViewModel homeViewModel;
     RecyclerView mainRecyclerView;
-    RestaurantRecyclerViewAdapter restaurantAdapter;
+    RestaurantAdapter restaurantAdapter;
     EditText etSearch;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -41,6 +52,7 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
         return root;
     }
 
@@ -51,15 +63,7 @@ public class HomeFragment extends Fragment {
         etSearch = view.findViewById(R.id.home_et_search);
         mainRecyclerView = view.findViewById(R.id.home_rv_restaurant);
 
-        homeViewModel.getRestaurantMutableLiveData().observe(getViewLifecycleOwner(), new Observer<ArrayList<Restaurant>>() {
-            @Override
-            public void onChanged(ArrayList<Restaurant> restaurants) {
-                restaurantAdapter = new RestaurantRecyclerViewAdapter(getContext(), restaurants);
-                mainRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                mainRecyclerView.setAdapter(restaurantAdapter);
-            }
-        });
-
+        initRecyclerView();
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -69,7 +73,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String query = etSearch.getText().toString().trim();
-                restaurantAdapter.getFilter().filter(query);
+
+                if (!TextUtils.isEmpty(query)) {
+                    restaurantAdapter.setQuery(Fuego.mStore.collection("restaurants").whereGreaterThanOrEqualTo("name", query));
+                } else {
+                    restaurantAdapter.setQuery(Fuego.mStore.collection("restaurants"));
+                }
             }
 
             @Override
@@ -77,5 +86,50 @@ public class HomeFragment extends Fragment {
 
             }
         });
+    }
+
+    private void initRecyclerView() {
+        Query mQuery = FirebaseFirestore.getInstance().collection("restaurants");
+        restaurantAdapter = new RestaurantAdapter(mQuery, this) {
+            @Override
+            protected void onDataChanged() {
+                if (getItemCount() == 0) {
+                    mainRecyclerView.setVisibility(View.GONE);
+                } else {
+                    mainRecyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            protected void onError(FirebaseFirestoreException e) {
+
+            }
+        };
+
+        mainRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mainRecyclerView.setAdapter(restaurantAdapter);
+    }
+
+    @Override
+    public void onRestaurantSelected(Restaurant restaurant) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("restaurant", restaurant);
+        NavHostFragment.findNavController(FragmentManager.findFragment(getView())).navigate(R.id.nav_restaurant_details, bundle);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (restaurantAdapter != null)
+            restaurantAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (restaurantAdapter != null)
+            restaurantAdapter.stopListening();
     }
 }

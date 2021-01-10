@@ -16,8 +16,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.R;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 
 public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RestaurantRecyclerViewAdapter.RestaurantViewHolder> implements Filterable {
@@ -82,6 +84,8 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
             }
         };
     }
+
+
 
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView tvName;

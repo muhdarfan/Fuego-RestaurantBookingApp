@@ -13,15 +13,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.azul.fuego.core.Fuego;
+import com.azul.fuego.core.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 
 public class RegisterActivity extends AppCompatActivity {
-    protected EditText name, email, pass, confirmPass, phone;
+    protected EditText etName, etEmail, etPass, etConfirmPass, etPhone;
     protected Button regBtn;
     protected TextView loginBtn;
     private FirebaseAuth mFirebaseAuth;
@@ -31,11 +36,11 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        name = findViewById(R.id.register_et_name);
-        email = findViewById(R.id.register_et_email);
-        pass = findViewById(R.id.register_et_pass);
-        confirmPass = findViewById(R.id.register_et_confirmpass);
-        phone = findViewById(R.id.register_et_phone);
+        etName = findViewById(R.id.register_et_name);
+        etEmail = findViewById(R.id.register_et_email);
+        etPass = findViewById(R.id.register_et_pass);
+        etConfirmPass = findViewById(R.id.register_et_confirmpass);
+        etPhone = findViewById(R.id.register_et_phone);
 
         regBtn = findViewById(R.id.register_btn_submit);
         loginBtn = findViewById(R.id.register_tv_login);
@@ -46,16 +51,16 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (ValidateField()) {
-                    mFirebaseAuth.createUserWithEmailAndPassword(email.getText().toString().trim(), pass.getText().toString().trim()).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
+                    String email = etEmail.getText().toString().trim();
+                    String pass = etPass.getText().toString().trim();
+                    String name = etName.getText().toString().trim();
+                    String phone = etPhone.getText().toString().trim();
+
+                    mFirebaseAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName("Jane Q. User")
-                                        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
-
-                                        .build();
-                                mFirebaseAuth.getCurrentUser().updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                Fuego.mStore.collection("users").document(mFirebaseAuth.getUid()).set(new Users(mFirebaseAuth.getUid(), name, email, phone)).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
@@ -78,18 +83,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private Boolean ValidateField() {
-        if (TextUtils.isEmpty(name.getText().toString().trim())) {
-            name.setError("");
-        } else if (TextUtils.isEmpty(email.getText().toString().trim())) {
-            email.setError("");
-        } else if (TextUtils.isEmpty(pass.getText().toString().trim())) {
-            pass.setError("");
-        } else if (TextUtils.isEmpty(confirmPass.getText().toString().trim())) {
-            confirmPass.setError("");
-        } else if (TextUtils.isEmpty(phone.getText().toString().trim())) {
-            phone.setError("");
-        } else if (!pass.getText().toString().equals(confirmPass.getText().toString().trim())) {
-            confirmPass.setError("Password is mismatch.");
+        if (TextUtils.isEmpty(etName.getText().toString().trim())) {
+            etName.setError("");
+        } else if (TextUtils.isEmpty(etEmail.getText().toString().trim())) {
+            etEmail.setError("");
+        } else if (TextUtils.isEmpty(etPass.getText().toString().trim())) {
+            etPass.setError("");
+        } else if (TextUtils.isEmpty(etConfirmPass.getText().toString().trim())) {
+            etConfirmPass.setError("");
+        } else if (TextUtils.isEmpty(etPhone.getText().toString().trim())) {
+            etPhone.setError("");
+        } else if (!etPass.getText().toString().equals(etConfirmPass.getText().toString().trim())) {
+            etPass.setError("Password is mismatch.");
         } else {
             return true;
         }

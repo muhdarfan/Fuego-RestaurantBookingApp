@@ -49,13 +49,17 @@
     <fragment
         android:id="@+id/nav_profile_edit"
         android:name="com.azul.fuego.ui.profile.ProfileEditFragment"
-        android:label="fragment_profile_edit"
+        android:label="@string/menu_profile_edit"
         tools:layout="@layout/fragment_profile_edit" />
     <fragment
         android:id="@+id/nav_restaurant_details"
         android:name="com.azul.fuego.ui.restaurant.RestaurantDetailActivity"
         android:label="fragment_restaurant_detail_activity"
-        tools:layout="@layout/fragment_restaurant_detail_activity" />
+        tools:layout="@layout/fragment_restaurant_detail_activity" >
+        <action
+            android:id="@+id/action_nav_restaurant_details_to_bookTableFragment"
+            app:destination="@id/nav_book_table" />
+    </fragment>
     <fragment
         android:id="@+id/nav_favourites"
         android:name="com.azul.fuego.ui.restaurant.favourites.FavouriteRestaurantFragment"
@@ -71,4 +75,9 @@
         android:name="com.azul.fuego.ui.restaurant.history.BookingHistoryFragment"
         android:label="@string/menu_history"
         tools:layout="@layout/booking_history_fragment" />
+    <fragment
+        android:id="@+id/nav_book_table"
+        android:name="com.azul.fuego.ui.restaurant.BookTableFragment"
+        android:label="@string/menu_book_table"
+        tools:layout="@layout/fragment_book_table" />
 </navigation>

@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    app:cardBackgroundColor="#E1E2E1"
     app:cardCornerRadius="16dp">
 
     <LinearLayout
@@ -15,7 +17,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.7">
+            android:layout_weight="0.69">
 
             <TextView
                 android:id="@+id/rv_booking_tv_name"
@@ -38,7 +40,15 @@
                 android:text="TextView"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.01"
+            android:background="?android:attr/listDivider" />
 
         <TextView
             android:id="@+id/rv_booking_tv_time"
@@ -46,6 +56,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.3"
             android:gravity="center"
+            android:shadowColor="#000000"
             android:text="TextView"
             android:textAlignment="center" />
     </LinearLayout>

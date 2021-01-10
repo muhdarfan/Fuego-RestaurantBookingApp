@@ -54,9 +54,9 @@ public class ProfileEditFragment extends Fragment {
         etPhone = view.findViewById(R.id.profile_edit_et_phone);
         updateBtn = view.findViewById(R.id.profile_edit_btn_update);
 
-        etName.setText(Fuego.User.getDisplayName());
-        etEmail.setText(Fuego.User.getEmail());
-        etPhone.setText(Fuego.User.getPhoneNumber());
+        etName.setText(Fuego.UserData.getFullname());
+        etEmail.setText(Fuego.UserData.getEmail());
+        etPhone.setText(Fuego.UserData.getPhone());
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +69,21 @@ public class ProfileEditFragment extends Fragment {
                 String phone = etPhone.getText().toString().trim();
 
                 if (!(TextUtils.isEmpty(name) && TextUtils.isEmpty(email) && TextUtils.isEmpty(phone)) && Fuego.isValidEmail(email) && (TextUtils.isEmpty(pass) | pass.length() > 5)) {
+                    Fuego.UserData.UpdateProfile(name, email, phone);
+
+                    if (!TextUtils.isEmpty(pass)) {
+                        Fuego.User.updatePassword(pass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (!task.isSuccessful())
+                                    Toast.makeText(view.getContext(), "Failed to update password. [MSG: " + task.getException().getMessage() + "]", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+
+                    Snackbar.make(view, "Your profile information has been successfully updated!", Snackbar.LENGTH_LONG).show();
+                    NavHostFragment.findNavController(ProfileEditFragment.this).popBackStack();
+                    /*
                         if (!email.equals(Fuego.User.getEmail())) {
                             Fuego.User.updateEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -102,6 +117,7 @@ public class ProfileEditFragment extends Fragment {
                                 }
                             }
                         });
+                     */
                 } else {
                     if (TextUtils.isEmpty(name))
                         etName.setError("");

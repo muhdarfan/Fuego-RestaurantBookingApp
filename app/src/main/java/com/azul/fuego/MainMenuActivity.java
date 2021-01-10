@@ -92,6 +92,15 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
+                if (!getSupportActionBar().isShowing() && destination.getId() != R.id.nav_restaurant_details) {
+                    getSupportActionBar().show();
+                }
+            }
+        });
+
         nav_tvName = headerView.findViewById(R.id.nav_tv_name);
         nav_tvEmail = headerView.findViewById(R.id.nav_tv_email);
         nav_ivPhoto = headerView.findViewById(R.id.nav_iv_profile_photo);
@@ -102,14 +111,20 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onResume();
 
         myApp = new Fuego();
-        if (Fuego.isLoggedIn()) {
-            String name = Fuego.User.getDisplayName();
-            String email = Fuego.User.getEmail();
-            String phone = Fuego.User.getPhoneNumber();
-            Uri photo = Fuego.User.getPhotoUrl();
 
-            nav_tvName.setText(name);
-            nav_tvEmail.setText(email);
+        if (Fuego.User != null) {
+            Fuego.mStore.collection("users").document(Fuego.User.getUid()).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (!task.getResult().exists()) {
+                        Fuego.SignOut();
+                        throw new RuntimeException("User data doesn't exists. UID: " + Fuego.User.getUid());
+                    } else {
+                        Fuego.UserData = task.getResult().toObject(Users.class);
+                        nav_tvName.setText(Fuego.UserData.getFullname());
+                        nav_tvEmail.setText(Fuego.UserData.getPhone());
+                    }
+                }
+            });
         } else {
             startActivity(new Intent(MainMenuActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         }
