@@ -1,7 +1,7 @@
 package com.azul.fuego.core;
+
 import com.google.firebase.Timestamp;
 
-import java.io.Serializable;
 import java.util.Map;
 
 public class Booking {

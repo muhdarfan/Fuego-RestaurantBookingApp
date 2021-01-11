@@ -1,10 +1,6 @@
 package com.azul.fuego;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,17 +9,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.azul.fuego.core.Fuego;
 import com.azul.fuego.core.Users;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
 
 public class RegisterActivity extends AppCompatActivity {
     protected EditText etName, etEmail, etPass, etConfirmPass, etPhone;
@@ -84,15 +78,17 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Boolean ValidateField() {
         if (TextUtils.isEmpty(etName.getText().toString().trim())) {
-            etName.setError("");
+            etName.setError("Please enter a name.");
         } else if (TextUtils.isEmpty(etEmail.getText().toString().trim())) {
-            etEmail.setError("");
+            etEmail.setError("Please enter an email address.");
+        } else if (!Fuego.isValidEmail(etEmail.getText().toString().trim())) {
+            etEmail.setError("Please enter a valid email address.");
         } else if (TextUtils.isEmpty(etPass.getText().toString().trim())) {
-            etPass.setError("");
+            etPass.setError("Please enter a password.");
         } else if (TextUtils.isEmpty(etConfirmPass.getText().toString().trim())) {
-            etConfirmPass.setError("");
+            etConfirmPass.setError("Please enter a password.");
         } else if (TextUtils.isEmpty(etPhone.getText().toString().trim())) {
-            etPhone.setError("");
+            etPhone.setError("Please enter a phone number.");
         } else if (!etPass.getText().toString().equals(etConfirmPass.getText().toString().trim())) {
             etPass.setError("Password is mismatch.");
         } else {

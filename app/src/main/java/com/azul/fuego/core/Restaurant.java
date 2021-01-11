@@ -3,18 +3,12 @@ package com.azul.fuego.core;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.type.LatLng;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Restaurant implements Parcelable {

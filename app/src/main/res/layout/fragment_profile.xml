@@ -23,7 +23,6 @@
             android:id="@+id/profile_iv_profile"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:background="@android:color/transparent"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/ic_launcher_foreground" />
 

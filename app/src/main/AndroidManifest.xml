@@ -15,26 +15,16 @@
         <activity android:name=".ui.restaurant.BookingConfirmationActivity"></activity>
         <activity
             android:name=".MainMenuActivity"
-            android:theme="@style/Theme.FuegoBooking.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FuegoBooking.NoActionBar" />
         <activity android:name=".RegisterActivity" />
-        <!--
-        <activity android:name=".SplashActivity">
+        <activity android:name=".LoginActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" />
+        <activity android:name=".SplashActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        -->
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SplashActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

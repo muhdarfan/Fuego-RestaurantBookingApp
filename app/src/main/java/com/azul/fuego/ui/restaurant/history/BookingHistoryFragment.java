@@ -1,25 +1,20 @@
 package com.azul.fuego.ui.restaurant.history;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.azul.fuego.R;
-import com.azul.fuego.core.Booking;
 import com.azul.fuego.core.BookingHistoryRecyclerViewAdapter;
-import com.azul.fuego.ui.restaurant.favourites.FavouriteRestaurantViewModel;
 
 import java.util.ArrayList;
 

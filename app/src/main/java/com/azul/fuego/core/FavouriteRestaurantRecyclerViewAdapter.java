@@ -48,8 +48,11 @@ public class FavouriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter
                         .setPositiveButton("YES", (dialog, which) -> {
                             Fuego.UserData.getFavourites().remove(restaurantList.get(position).getRefID());
                             Fuego.UserData.save();
+                            restaurantList.remove(position);
+                            notifyDataSetChanged();
                         })
                         .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
+
                 return true;
             }
         });

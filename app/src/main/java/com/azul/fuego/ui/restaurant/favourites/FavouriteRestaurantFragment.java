@@ -1,26 +1,20 @@
 package com.azul.fuego.ui.restaurant.favourites;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.azul.fuego.R;
 import com.azul.fuego.core.FavouriteRestaurantRecyclerViewAdapter;
-import com.azul.fuego.core.Restaurant;
-
-import java.util.ArrayList;
 
 public class FavouriteRestaurantFragment extends Fragment {
     private FavouriteRestaurantViewModel mViewModel;
@@ -46,14 +40,13 @@ public class FavouriteRestaurantFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         favouriteRecyclerView = view.findViewById(R.id.favourite_rv_restaurant_list);
-        mViewModel.getFavouriteListData().observe(getViewLifecycleOwner(), new Observer<ArrayList<Restaurant>>() {
-            @Override
-            public void onChanged(ArrayList<Restaurant> restaurants) {
-                if (restaurants != null) {
-                    favouriteAdapter = new FavouriteRestaurantRecyclerViewAdapter(getContext(), restaurants);
-                    favouriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    favouriteRecyclerView.setAdapter(favouriteAdapter);
-                }
+        mViewModel.getFavouriteListData().observe(getViewLifecycleOwner(), restaurants -> {
+            if (restaurants != null) {
+                favouriteAdapter = new FavouriteRestaurantRecyclerViewAdapter(getContext(), restaurants);
+                favouriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                favouriteRecyclerView.setAdapter(favouriteAdapter);
+            } else {
+                Log.v("asd", "aik");
             }
         });
     }

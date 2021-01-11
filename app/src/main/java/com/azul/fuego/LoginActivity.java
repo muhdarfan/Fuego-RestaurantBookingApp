@@ -1,19 +1,18 @@
 package com.azul.fuego;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.azul.fuego.core.Fuego;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -42,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
             String user = etUser.getText().toString().trim();
             String pass = etPass.getText().toString().trim();
 
-            if (!TextUtils.isEmpty(user) && !TextUtils.isEmpty(pass)) {
+            if (!TextUtils.isEmpty(user) && Fuego.isValidEmail(user) && !TextUtils.isEmpty(pass)) {
                 mFirebaseAuth.signInWithEmailAndPassword(user, pass).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -55,9 +54,11 @@ public class LoginActivity extends AppCompatActivity {
                 });
             } else {
                 if (TextUtils.isEmpty(user))
-                    etUser.setError("");
+                    etUser.setError("Please enter an email.");
+                else if (!Fuego.isValidEmail(user))
+                    etUser.setError("Please enter a valid email address.");
                 else if (TextUtils.isEmpty(pass))
-                    etPass.setError("");
+                    etPass.setError("Please enter a password.");
             }
         });
 
