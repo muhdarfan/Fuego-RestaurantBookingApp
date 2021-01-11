@@ -22,6 +22,7 @@ import com.azul.fuego.R;
 import com.azul.fuego.core.Booking;
 import com.azul.fuego.core.Restaurant;
 import com.azul.fuego.ui.profile.ProfileEditFragment;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -79,6 +80,7 @@ public class RestaurantDetailActivity extends Fragment implements OnMapReadyCall
         name.setText(restaurant.getName());
         address.setText(restaurant.getAddress());
         about.setText(restaurant.getAbout());
+        Glide.with(picture.getContext()).load(restaurant.getPhoto_url()).fitCenter().into(picture);
 
         if (restaurant.getOperating() != null) {
             String start = restaurant.getOperating().get("start");

@@ -71,9 +71,6 @@ public class MainMenuActivity extends AppCompatActivity {
                 if (!handled) {
                     switch (item.getItemId()) {
                         case R.id.nav_logout:
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainMenuActivity.this);
-                            builder.setMessage("Are you sure want to logout ?");
-
                             new AlertDialog.Builder(MainMenuActivity.this)
                                     .setTitle("Logout")
                                     .setMessage("Are you sure want to logout?")

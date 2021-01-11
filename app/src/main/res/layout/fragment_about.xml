@@ -37,6 +37,7 @@
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
             android:text="This Privacy Policy explains how Azul Fuego, uses your personal information which you provided to Azul Fuego when interacting with Azul Fuego or by using our service, and mobile appli-cations (apps). In this respect, you shall be responsible for providing accurate, not misleading, complete and up-to-date personal information to Azul Fuego and consent to the processing of these personal infor-mation by Azul Fuego in Malaysia and outside Malaysia.  In the event of any conflict, the English version shall prevail. Azul Fuego shall have the right to modify, update or amend the terms of this Privacy Policy at any time by placing the updated Privacy Policy on the Website. By continuing to interact with Azul Fuego or by continuing to use Azul Fuego's services following the modifications, updates or amendments to this Privacy Policy shall signify your acceptance of such modifications, updates or amendments.  “Personal Information” refers to personal data which you have provided to Azul Fuego and any information that can be used to identify you.  “Processing” refers to collecting, holding, storing, recording, organizing, adapting, using, disclosing or cor-recting Personal Information. " />
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

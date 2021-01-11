@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Restaurant implements Parcelable {
-    private String refID, name, phone, address, about, imgUri, website;
+    private String refID, name, phone, address, about, photo_url, website;
     private Integer seats;
     private Map<String, Map<String, Booking>> bookingList;
     private Map<String, String> operating;
@@ -36,7 +36,7 @@ public class Restaurant implements Parcelable {
         this.phone = phone;
         this.address = address;
         this.about = about;
-        this.imgUri = imgUri;
+        this.photo_url = imgUri;
         this.website = website;
         this.seats = seats;
         this.bookingList = bookingList;
@@ -51,7 +51,7 @@ public class Restaurant implements Parcelable {
         phone = in.readString();
         address = in.readString();
         about = in.readString();
-        imgUri = in.readString();
+        photo_url = in.readString();
         website = in.readString();
         if (in.readByte() == 0) {
             seats = null;
@@ -68,7 +68,7 @@ public class Restaurant implements Parcelable {
         dest.writeString(phone);
         dest.writeString(address);
         dest.writeString(about);
-        dest.writeString(imgUri);
+        dest.writeString(photo_url);
         dest.writeString(website);
         if (seats == null) {
             dest.writeByte((byte) 0);
@@ -187,12 +187,12 @@ public class Restaurant implements Parcelable {
         this.about = about;
     }
 
-    public String getImgUri() {
-        return imgUri;
+    public String getPhoto_url() {
+        return photo_url;
     }
 
-    public void setImgUri(String imgUri) {
-        this.imgUri = imgUri;
+    public void setPhoto_url(String photo_url) {
+        this.photo_url = photo_url;
     }
 
     public String getWebsite() {

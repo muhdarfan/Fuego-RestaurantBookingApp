@@ -49,7 +49,7 @@ public class FavouriteRestaurantFragment extends Fragment {
         mViewModel.getFavouriteListData().observe(getViewLifecycleOwner(), new Observer<ArrayList<Restaurant>>() {
             @Override
             public void onChanged(ArrayList<Restaurant> restaurants) {
-                if (restaurants != null && restaurants.size() > 0) {
+                if (restaurants != null) {
                     favouriteAdapter = new FavouriteRestaurantRecyclerViewAdapter(getContext(), restaurants);
                     favouriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     favouriteRecyclerView.setAdapter(favouriteAdapter);

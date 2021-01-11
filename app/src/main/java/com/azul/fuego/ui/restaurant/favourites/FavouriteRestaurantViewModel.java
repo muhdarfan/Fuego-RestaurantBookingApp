@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class FavouriteRestaurantViewModel extends ViewModel {
     private MutableLiveData<ArrayList<Restaurant>> favouriteListData;
@@ -23,17 +24,19 @@ public class FavouriteRestaurantViewModel extends ViewModel {
         favouriteListData = new MutableLiveData<>();
         ArrayList<Restaurant> restaurantsList = new ArrayList<>();
 
-        Fuego.mStore.collection("restaurants").whereIn("refID", Fuego.UserData.getFavourites()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for (DocumentSnapshot snapshot : task.getResult()) {
-                        restaurantsList.add(snapshot.toObject(Restaurant.class));
-                        favouriteListData.setValue(restaurantsList);
+        if (!Fuego.UserData.getFavourites().isEmpty()) {
+            Fuego.mStore.collection("restaurants").whereIn("refID", Fuego.UserData.getFavourites()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()) {
+                        for (DocumentSnapshot snapshot : task.getResult()) {
+                            restaurantsList.add(snapshot.toObject(Restaurant.class));
+                            favouriteListData.setValue(restaurantsList);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     public MutableLiveData<ArrayList<Restaurant>> getFavouriteListData() {

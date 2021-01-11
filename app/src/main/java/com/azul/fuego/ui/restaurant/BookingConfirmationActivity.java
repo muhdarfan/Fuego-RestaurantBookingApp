@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,11 +14,13 @@ import com.azul.fuego.R;
 import com.azul.fuego.core.Booking;
 import com.azul.fuego.core.Fuego;
 import com.azul.fuego.core.Restaurant;
+import com.bumptech.glide.Glide;
 
 public class BookingConfirmationActivity extends AppCompatActivity {
     private Restaurant restaurant;
     private TextView tvID, tvRestaurant, tvDate, tvPeople, tvTime, tvName;
     private Button btnAdd, btnContinue;
+    private ImageView ivImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
         tvDate = findViewById(R.id.booking_form_tv_date);
         tvPeople = findViewById(R.id.booking_form_tv_people);
         tvTime = findViewById(R.id.booking_form_tv_time);
+        ivImage = findViewById(R.id.booking_form_iv_img);
 
         btnAdd = findViewById(R.id.booking_form_btn_add_fav);
         btnContinue = findViewById(R.id.booking_form_btn_continue);
@@ -46,6 +50,8 @@ public class BookingConfirmationActivity extends AppCompatActivity {
         tvDate.setText(extras.getString("date"));
         tvPeople.setText(extras.getInt("seats") + " people(s)");
         tvTime.setText(extras.getString("time"));
+
+        Glide.with(ivImage.getContext()).load(restaurant.getPhoto_url()).fitCenter().into(ivImage);
 
         if (Fuego.UserData.getFavourites().contains(restaurant.getRefID()))
             btnAdd.setVisibility(View.GONE);

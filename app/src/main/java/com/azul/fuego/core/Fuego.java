@@ -26,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class Fuego {
     public static FirebaseAuth mAuth;
     public static FirebaseUser User;
     public static FirebaseFirestore mStore;
+    public static StorageReference mStorage;
     public static Users UserData;
     public static String[] availableLanguage = {"English", "Bahasa Melayu", "Chinese"};
 
@@ -41,6 +44,7 @@ public class Fuego {
         mAuth = FirebaseAuth.getInstance();
         User = mAuth.getCurrentUser();
         mStore = FirebaseFirestore.getInstance();
+        mStorage = FirebaseStorage.getInstance().getReference();
     }
 
     public static void SignOut() {

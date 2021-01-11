@@ -1,5 +1,6 @@
 package com.azul.fuego.core;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -15,25 +16,27 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class Users{
-    private String UID, Fullname, Email, Roles, Gender, Phone;
+    private String UID, Fullname, Email, Roles, Gender, Phone, PhotoURL;
     private List<String> Favourites;
 
     public Users() {
     }
 
-    public Users(String uid, String fullname, String email, String roles, String gender, List<String> favourites) {
+    public Users(String uid, String fullname, String email, String roles, String gender, List<String> favourites, String photo) {
         UID = uid;
         Fullname = fullname;
         Email = email;
         Roles = roles;
         Gender = gender;
         Favourites = favourites;
+        PhotoURL = photo;
     }
 
     public Users(String uid, String name, String email, String phone) {
@@ -117,5 +120,14 @@ public class Users{
 
     public void setFavourites(List<String> favourites) {
         Favourites = favourites;
+    }
+
+    public String getPhotoURL() {
+        return PhotoURL;
+    }
+
+    public void setPhotoURL(String photoURL) {
+        PhotoURL = photoURL;
+        StorageReference fileRef = Fuego.mStorage.child("profile.jpg");
     }
 }

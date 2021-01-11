@@ -2,6 +2,7 @@ package com.azul.fuego.core;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.R;
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class RestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Restaura
     @Override
     public void onBindViewHolder(@NonNull RestaurantViewHolder holder, int position) {
         holder.tvName.setText(itemsFiltered.get(position).getName());
+        Glide.with(holder.imgResturantImage.getContext()).load(itemsFiltered.get(position).getPhoto_url()).into(holder.imgResturantImage);
         // set image
     }
 

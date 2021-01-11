@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.R;
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 
@@ -72,6 +73,7 @@ public class RestaurantAdapter extends FirestoreAdapter<RestaurantAdapter.ViewHo
 
              */
             tvName.setText(restaurant.getName());
+            Glide.with(imgRestaurantImage.getContext()).load(restaurant.getPhoto_url()).fitCenter().into(imgRestaurantImage);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
