@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.azul.fuego.core.Fuego;
-import com.azul.fuego.core.Users;
+import com.azul.fuego.core.objects.Users;
 
 public class ProfileViewModel extends ViewModel {
     private MutableLiveData<Users> userData;

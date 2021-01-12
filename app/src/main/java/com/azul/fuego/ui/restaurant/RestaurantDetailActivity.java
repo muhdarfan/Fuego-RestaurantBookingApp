@@ -1,5 +1,7 @@
 package com.azul.fuego.ui.restaurant;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.azul.fuego.R;
-import com.azul.fuego.core.Restaurant;
+import com.azul.fuego.core.Fuego;
+import com.azul.fuego.core.objects.Restaurant;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -25,14 +28,18 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.GeoPoint;
 
 public class RestaurantDetailActivity extends Fragment implements OnMapReadyCallback {
     private Restaurant restaurant;
-    private TextView name, operating_hours, address, about;
+    private TextView name, operating_hours, address, about, seats, phone, website;
     private MapView location;
     private ImageView picture;
     private Button bookBtn;
     private ImageButton backBtn;
+    private FloatingActionButton optionsBtn;
 
     private GoogleMap mMap;
     private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -53,26 +60,33 @@ public class RestaurantDetailActivity extends Fragment implements OnMapReadyCall
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-        return inflater.inflate(R.layout.fragment_restaurant_detail_activity, container, false);
+        //return inflater.inflate(R.layout.fragment_restaurant_detail_activity, container, false);
+        return inflater.inflate(R.layout.fragment_restaurant_detail, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         // Initialize
         name = view.findViewById(R.id.restaurant_detail_tv_name);
-        operating_hours = view.findViewById(R.id.restaurant_detail_tv_operating_hours);
+        operating_hours = view.findViewById(R.id.restaurant_detail_tv_operating);
         address = view.findViewById(R.id.restaurant_detail_tv_address);
         about = view.findViewById(R.id.restaurant_detail_tv_about);
         location = view.findViewById(R.id.restaurant_detail_mv_location);
         picture = view.findViewById(R.id.restaurant_detail_iv_image);
         bookBtn = view.findViewById(R.id.restaurant_detail_btn_book);
-        backBtn = view.findViewById(R.id.restaurant_detail_btn_back);
+        backBtn = view.findViewById(R.id.restaurant_detail_back_btn);
+        seats = view.findViewById(R.id.restaurant_detail_tv_seats);
+        phone = view.findViewById(R.id.restaurant_detail_tv_phone);
+        website = view.findViewById(R.id.restaurant_detail_tv_website);
+        optionsBtn = view.findViewById(R.id.restaurant_detail_btn_option_menu);
 
         name.setText(restaurant.getName());
         address.setText(restaurant.getAddress());
         about.setText(restaurant.getAbout());
+        seats.setText(restaurant.getSeats().toString());
+        phone.setText(restaurant.getPhone());
+        website.setText(restaurant.getWebsite() == "" ? "No website yet." : restaurant.getWebsite());
         Glide.with(picture.getContext()).load(restaurant.getPhoto_url()).fitCenter().into(picture);
 
         if (restaurant.getOperating() != null) {
@@ -90,17 +104,73 @@ public class RestaurantDetailActivity extends Fragment implements OnMapReadyCall
         location.onCreate(mapViewBundle);
         location.getMapAsync(this);
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(RestaurantDetailActivity.this).popBackStack();
-            }
-        });
+        backBtn.setOnClickListener(v -> NavHostFragment.findNavController(RestaurantDetailActivity.this).popBackStack());
 
         bookBtn.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putParcelable("restaurant", restaurant);
             NavHostFragment.findNavController(RestaurantDetailActivity.this).navigate(R.id.nav_book_table, bundle);
+        });
+
+        optionsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionsBtn.setEnabled(false);
+
+                Boolean isFav = Fuego.UserData.getFavourites().contains(restaurant.getRefID());
+
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(view.getContext(), R.style.BottomSheetDialogTheme);
+                View bottomSheetView = LayoutInflater.from(view.getContext()).inflate(R.layout.layout_restaurant_bottom_sheet, view.findViewById(R.id.bottom_sheet_restaurant_container));
+
+                if (isFav) {
+                    Button btn = bottomSheetView.findViewById(R.id.bottom_restaurant_btn_add_fav);
+                    btn.setText("Remove from favourites");
+                }
+                // Add to fav
+                bottomSheetView.findViewById(R.id.bottom_restaurant_btn_add_fav).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.dismiss();
+
+                        if (isFav) {
+                            Fuego.UserData.getFavourites().remove(restaurant.getRefID());
+                            Toast.makeText(getContext(), restaurant.getName() + " has been removed from your favourites.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Fuego.UserData.getFavourites().add(restaurant.getRefID());
+                            Toast.makeText(getContext(), restaurant.getName() + " has been added to your favourites.", Toast.LENGTH_LONG).show();
+                        }
+
+                        Fuego.UserData.save();
+                    }
+                });
+                bottomSheetView.findViewById(R.id.bottom_restaurant_btn_share).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.dismiss();
+
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String shareBody = "Here's " + restaurant.getName() + " on Fuego. Check out what they have! https://fuego.com/" + restaurant.getRefID();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, restaurant.getName());
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                        startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    }
+                });
+                // Open in Maps
+                bottomSheetView.findViewById(R.id.bottom_restaurant_btn_open_map).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.dismiss();
+                        GeoPoint loc = restaurant.getLocation();
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                Uri.parse("http://maps.google.com/maps?daddr=" + loc.getLatitude() + ","+ loc.getLongitude()));
+                        startActivity(intent);
+                    }
+                });
+                bottomSheetDialog.setOnDismissListener(dialog -> optionsBtn.setEnabled(true));
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+            }
         });
     }
 

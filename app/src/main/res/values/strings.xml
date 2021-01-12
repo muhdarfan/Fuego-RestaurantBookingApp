@@ -17,4 +17,8 @@
     <string name="menu_book_table">Booking Form</string>
     <string name="menu_about">About Us</string>
     <string name="menu_logout">Logout</string>
+
+    <string name="bottom_sheet_take_photo">Take Photo</string>
+    <string name="bottom_sheet_choose_photo">Choose From Library</string>
+    <string name="cancel">Cancel</string>
 </resources>

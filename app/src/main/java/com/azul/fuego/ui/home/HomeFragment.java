@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.R;
 import com.azul.fuego.core.Fuego;
-import com.azul.fuego.core.Restaurant;
 import com.azul.fuego.core.RestaurantAdapter;
+import com.azul.fuego.core.objects.Restaurant;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -52,9 +54,7 @@ public class HomeFragment extends Fragment implements RestaurantAdapter.OnRestau
         initRecyclerView();
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -68,9 +68,7 @@ public class HomeFragment extends Fragment implements RestaurantAdapter.OnRestau
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -79,16 +77,14 @@ public class HomeFragment extends Fragment implements RestaurantAdapter.OnRestau
         restaurantAdapter = new RestaurantAdapter(mQuery, this) {
             @Override
             protected void onDataChanged() {
-                if (getItemCount() == 0) {
+                if (getItemCount() == 0)
                     mainRecyclerView.setVisibility(View.GONE);
-                } else {
+                else
                     mainRecyclerView.setVisibility(View.VISIBLE);
-                }
             }
 
             @Override
             protected void onError(FirebaseFirestoreException e) {
-
             }
         };
 

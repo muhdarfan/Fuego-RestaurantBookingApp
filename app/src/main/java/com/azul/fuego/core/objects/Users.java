@@ -1,7 +1,10 @@
-package com.azul.fuego.core;
+package com.azul.fuego.core.objects;
+
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
+import com.azul.fuego.core.Fuego;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.SetOptions;
@@ -11,20 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Users {
-    private String UID, Fullname, Email, Roles, Gender, Phone, PhotoURL;
+    private String UID, Fullname, Email, Phone, PhotoURL;
     private List<String> Favourites;
 
     public Users() {
     }
 
-    public Users(String uid, String fullname, String email, String roles, String gender, List<String> favourites, String photo) {
-        UID = uid;
+    public Users(String UID, String fullname, String email, String phone, String photoURL, List<String> favourites) {
+        this.UID = UID;
         Fullname = fullname;
         Email = email;
-        Roles = roles;
-        Gender = gender;
+        Phone = phone;
+        PhotoURL = photoURL;
         Favourites = favourites;
-        PhotoURL = photo;
     }
 
     public Users(String uid, String name, String email, String phone) {
@@ -78,22 +80,6 @@ public class Users {
         Email = email;
     }
 
-    public String getRoles() {
-        return Roles;
-    }
-
-    public void setRoles(String roles) {
-        Roles = roles;
-    }
-
-    public String getGender() {
-        return Gender;
-    }
-
-    public void setGender(String gender) {
-        Gender = gender;
-    }
-
     public String getPhone() {
         return Phone;
     }
@@ -116,6 +102,5 @@ public class Users {
 
     public void setPhotoURL(String photoURL) {
         PhotoURL = photoURL;
-        StorageReference fileRef = Fuego.mStorage.child("profile.jpg");
     }
 }

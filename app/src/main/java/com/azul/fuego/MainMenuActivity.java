@@ -2,10 +2,13 @@ package com.azul.fuego;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,12 +24,18 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.azul.fuego.core.Fuego;
-import com.azul.fuego.core.Users;
+import com.azul.fuego.core.objects.Users;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainMenuActivity extends AppCompatActivity {
     private TextView nav_tvName, nav_tvEmail;
-    private ImageView nav_ivPhoto;
+    private CircleImageView nav_ivPhoto;
     private Toolbar toolbar;
     private Fuego myApp;
 
@@ -104,13 +113,21 @@ public class MainMenuActivity extends AppCompatActivity {
         if (Fuego.User != null) {
             Fuego.mStore.collection("users").document(Fuego.User.getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    if (!task.getResult().exists()) {
+                    if (!task.getResult().exists() || task.getResult().get("email") == null) {
+                        Toast.makeText(this, "Account problem. Please create a new account. [No Data]", Toast.LENGTH_LONG).show();
+                        Fuego.mStore.collection("users").document(Fuego.User.getUid()).delete();
+                        Fuego.User.delete();
                         Fuego.SignOut();
-                        throw new RuntimeException("User data doesn't exists. UID: " + Fuego.User.getUid());
+
+                        startActivity(new Intent(MainMenuActivity.this, LoginActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
                     } else {
                         Fuego.UserData = task.getResult().toObject(Users.class);
                         nav_tvName.setText(Fuego.UserData.getFullname());
                         nav_tvEmail.setText(Fuego.UserData.getPhone());
+
+                        if (Fuego.UserData.getPhotoURL() != null && !TextUtils.isEmpty(Fuego.UserData.getPhotoURL())) {
+                            Glide.with(this).load(Fuego.UserData.getPhotoURL()).into(nav_ivPhoto);
+                        }
                     }
                 }
             });

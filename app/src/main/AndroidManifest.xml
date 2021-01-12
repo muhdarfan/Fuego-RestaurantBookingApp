@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -15,21 +16,30 @@
         <activity android:name=".ui.restaurant.BookingConfirmationActivity"></activity>
         <activity
             android:name=".MainMenuActivity"
-            android:theme="@style/Theme.FuegoBooking.NoActionBar" />
+            android:theme="@style/Theme.FuegoBooking.NoActionBar">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" />
         <activity android:name=".SplashActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAstxdp17evGfteVDnGAU2I0WfCHTv04Dw "/>
+        <service
+            android:name=".core.Fuego"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

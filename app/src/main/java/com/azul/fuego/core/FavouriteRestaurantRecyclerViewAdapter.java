@@ -1,6 +1,7 @@
 package com.azul.fuego.core;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.azul.fuego.R;
+import com.azul.fuego.core.objects.Restaurant;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -38,23 +41,27 @@ public class FavouriteRestaurantRecyclerViewAdapter extends RecyclerView.Adapter
     public void onBindViewHolder(@NonNull FavouriteRestaurantRecyclerViewAdapter.FavouriteViewHolder holder, int position) {
         holder.tvName.setText(restaurantList.get(position).getName());
         Glide.with(holder.ivMain.getContext()).load(restaurantList.get(position).getPhoto_url()).into(holder.ivMain);
-        // Todo
-        holder.v.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                new AlertDialog.Builder(v.getContext())
-                        .setTitle("Remove favourite")
-                        .setMessage("Are you sure want to remove '" + holder.tvName.getText() + "' from your favourites?")
-                        .setPositiveButton("YES", (dialog, which) -> {
-                            Fuego.UserData.getFavourites().remove(restaurantList.get(position).getRefID());
-                            Fuego.UserData.save();
-                            restaurantList.remove(position);
-                            notifyDataSetChanged();
-                        })
-                        .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
 
-                return true;
-            }
+        // Go to restaurant detail
+        holder.v.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("restaurant", restaurantList.get(position));
+            Navigation.findNavController(v).navigate(R.id.nav_restaurant_details, bundle);
+        });
+        // Remove from favourite
+        holder.v.setOnLongClickListener(v -> {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Remove favourite")
+                    .setMessage("Are you sure want to remove '" + holder.tvName.getText() + "' from your favourites?")
+                    .setPositiveButton("YES", (dialog, which) -> {
+                        Fuego.UserData.getFavourites().remove(restaurantList.get(position).getRefID());
+                        Fuego.UserData.save();
+                        restaurantList.remove(position);
+                        notifyDataSetChanged();
+                    })
+                    .setNegativeButton("NO", (dialog, which) -> dialog.dismiss()).show();
+
+            return true;
         });
     }
 

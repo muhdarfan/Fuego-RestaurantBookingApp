@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.azul.fuego.R;
 import com.azul.fuego.core.Fuego;
-import com.azul.fuego.core.Restaurant;
+import com.azul.fuego.core.objects.Restaurant;
 import com.bumptech.glide.Glide;
 
 public class BookingConfirmationActivity extends AppCompatActivity {
@@ -45,7 +45,7 @@ public class BookingConfirmationActivity extends AppCompatActivity {
         tvID.setText("BOOKING ID: #" + extras.getString("bookingID"));
         tvName.setText(Fuego.UserData.getFullname());
         tvRestaurant.setText(restaurant.getName());
-        tvDate.setText(extras.getString("date"));
+        tvDate.setText(Fuego.FormatDate(extras.getString("date")));
         tvPeople.setText(extras.getInt("seats") + " people(s)");
         tvTime.setText(extras.getString("time"));
 

@@ -45,8 +45,6 @@ public class FavouriteRestaurantFragment extends Fragment {
                 favouriteAdapter = new FavouriteRestaurantRecyclerViewAdapter(getContext(), restaurants);
                 favouriteRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 favouriteRecyclerView.setAdapter(favouriteAdapter);
-            } else {
-                Log.v("asd", "aik");
             }
         });
     }

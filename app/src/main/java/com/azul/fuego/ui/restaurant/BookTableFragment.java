@@ -25,7 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.azul.fuego.R;
 import com.azul.fuego.core.Fuego;
-import com.azul.fuego.core.Restaurant;
+import com.azul.fuego.core.objects.Restaurant;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;

@@ -1,4 +1,4 @@
-package com.azul.fuego.core;
+package com.azul.fuego.core.objects;
 
 import android.os.Build;
 import android.os.Parcel;
@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.RequiresApi;
 
+import com.azul.fuego.core.Fuego;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.HashMap;

@@ -1,24 +1,13 @@
-package com.azul.fuego.core;
+package com.azul.fuego.core.objects;
 
 import com.google.firebase.Timestamp;
-
-import java.util.Map;
 
 public class Booking {
     private String userID, booked_time;
     private Integer booked;
     private Timestamp bookDate;
 
-    public Booking() {
-
-    }
-
-    public Booking(Map<String, Object> map) {
-        userID = (String) map.get("userID");
-        booked = Integer.parseInt(map.get("booked").toString());
-        booked_time = (String) map.get("Time");
-        bookDate = (Timestamp) map.get("date");
-    }
+    public Booking() { }
 
     public Booking(String userID, String booked_time, Integer booked) {
         this.userID = userID;
