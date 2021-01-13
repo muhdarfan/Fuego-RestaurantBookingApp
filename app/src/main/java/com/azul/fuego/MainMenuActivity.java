@@ -35,7 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainMenuActivity extends AppCompatActivity {
     private TextView nav_tvName, nav_tvEmail;
-    private CircleImageView nav_ivPhoto;
+    public CircleImageView nav_ivPhoto;
     private Toolbar toolbar;
     private Fuego myApp;
 
@@ -141,5 +141,12 @@ public class MainMenuActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    public void RefreshProfilePic() {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        nav_ivPhoto = findViewById(R.id.nav_iv_profile_photo);
+        Glide.with(this).load(Fuego.UserData.getPhotoURL()).into(nav_ivPhoto);
     }
 }

@@ -13,20 +13,18 @@
         android:roundIcon="@mipmap/ic_fuego_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FuegoBooking">
-        <activity android:name=".ui.restaurant.BookingConfirmationActivity"></activity>
+        <activity android:name=".ui.restaurant.BookingConfirmationActivity"/>
         <activity
             android:name=".MainMenuActivity"
-            android:theme="@style/Theme.FuegoBooking.NoActionBar">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
+            android:theme="@style/Theme.FuegoBooking.NoActionBar"/>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" />
         <activity android:name=".SplashActivity" android:theme="@style/Theme.FuegoBooking.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data

@@ -30,6 +30,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -45,7 +46,6 @@ public class ProfileFragment extends Fragment {
     private ProfileViewModel mViewModel;
     protected ImageView editBtn;
     protected CircleImageView editPictureBtn;
-    String currentPhotoPath;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     static final int PICK_IMAGE_REQUEST = 22;
 
@@ -129,9 +129,13 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap imageBitmap = (Bitmap) data.getExtras().get("data");
             editPictureBtn.setImageBitmap(imageBitmap);
+
             uploadImage();
         }
 
@@ -139,6 +143,7 @@ public class ProfileFragment extends Fragment {
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
                 editPictureBtn.setImageBitmap(bitmap);
+
                 uploadImage();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -167,6 +172,7 @@ public class ProfileFragment extends Fragment {
                     public void onComplete(@NonNull Task<Uri> task) {
                         Fuego.UserData.setPhotoURL(task.getResult().toString());
                         Fuego.UserData.save();
+                        ((MainMenuActivity)getActivity()).RefreshProfilePic();
                     }
                 });
                 Toast.makeText(getContext(), "Profile picture has been updated.", Toast.LENGTH_SHORT).show();
